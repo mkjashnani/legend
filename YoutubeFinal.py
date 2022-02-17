@@ -1,11 +1,12 @@
 import datetime
-import sys
+# import sys
 import time
 import Youtube
 import Telegram
 import telesend
 lv=0
 lvt=0
+While True:
  telesend.botmsg(str("hey"))
     update=Telegram.get_json_from_url('https://api.telegram.org/bot5033997656:AAHcGq2QaeKPclqzNhP2msPxYVpaJiXgvx8/getupdates')
     alldel=Youtube.Detailfetch(update)
