@@ -3,31 +3,21 @@ import time
 import googleapiclient.discovery
 import requests
 import json
-lv=0
-lvt=0
-
+count=0
 TOKEN = "5064671174:AAFTdDwyLtGK55K2k0wIJsioJsV5pzfcUPE"
 URL = "https://api.telegram.org/bot{}/".format(TOKEN)
-
-
 def get_url(url):
     response = requests.get(url)
     content = response.content.decode("utf8")
     return content
-
-
 def get_json_from_url(url):
     content = get_url(url)
     js = json.loads(content)
     return js
-
-
 def get_updates():
     url = URL + "getUpdates"
     js = get_json_from_url(url)
     return js
-
-
 def get_last_chat_id_and_text(updates):
     num_updates = len(updates["result"])
     last_update = num_updates - 1
@@ -35,12 +25,9 @@ def get_last_chat_id_and_text(updates):
     text = updates['result'][-1]['message']['text']
     #chat_id = updates["result"][2]["message"]["chat"]["id"]
     return (text)
-
-
 def send_message(text, chat_id):
     url = URL + "sendMessage?text={}&chat_id={}".format(text, chat_id)
     get_url(url)
-
 def botmsg(bot_message):
     bot_token = '5033997656:AAHcGq2QaeKPclqzNhP2msPxYVpaJiXgvx8'
     bot_chatID = '2025063834'#LEGEND
@@ -56,15 +43,12 @@ def Time(YTET):
     Net=int(YTET)-time.time()
     return Net
 def datetotimestamp(date):
-
     element = datetime.datetime.strptime(date,"%d/%m/%Y %H:%M:%S")
     timestamp1 = str(datetime.datetime.timestamp(element))
     timestamp_m=str()
-
     for i in range(0,int(len((timestamp1))-2)):
         timestamp_m=timestamp_m+str(timestamp1[i])
     return int(timestamp_m)
-
 def YoutubeAlgo(videoid):
     API_NAME = 'youtube'
     API_VERSION = 'v3'
@@ -88,72 +72,23 @@ def Detailfetch(update):
             b.append(a)
             a = ''
     return b
-
+update=get_json_from_url('https://api.telegram.org/bot5033997656:AAHcGq2QaeKPclqzNhP2msPxYVpaJiXgvx8/getupdates')
+video_id=Detailfetch(update=update)
+lv=int(YoutubeAlgo(videoid=video_id))
+lvt=time.time()
 while True:
-    botmsg("hey")
-    update= get_json_from_url('https://api.telegram.org/bot5033997656:AAHcGq2QaeKPclqzNhP2msPxYVpaJiXgvx8/getupdates')
-    alldel= Detailfetch(update)
-    print(alldel)
-    Rview=alldel[0]
-    ftime=alldel[1]
-    ftimet =  datetotimestamp(ftime)
-    video_id=alldel[2]
-    a=0
-    atime=0
-    b=0
-    btime=0
-    c=0
-    ctime=0
-    #
-    if lv!=0 and lvt!=0:
-        while True:
-            if  YoutubeAlgo(videoid=video_id)>lv:
-                nv= YoutubeAlgo(videoid=video_id)-lv
-                nt=time.time()-lvt
-                nvc=nv/nt
-                rt=ftimet-time.time()
-                et=nvc*rt+ YoutubeAlgo(videoid=video_id)
-                if int(et) > int(Rview):
-                    print("SViews Will Meet ", "Expected Views:- ", et)
-                    botmsg(str(("Views Will Meet ", "Expected Views:- ",et)))
-                else:
-                    botmsg(str(("Views Will Not Meet ", "Expected Views:- ", et)))
-                    print("SViews Will Not Meet ", "Expected Views:- ", et)
-
-                lv= YoutubeAlgo(videoid=video_id)
-                lvt=time.time()
-                break
-
-
-    try:
-        while True:
-            if  YoutubeAlgo(videoid=video_id)>a and a==0:
-                a=int( YoutubeAlgo(videoid=video_id))
-                atime=time.time()
-            elif  YoutubeAlgo(videoid=video_id) > a and b==0 and a!=0:
-                b = int( YoutubeAlgo(videoid=video_id))
-                btime = time.time()
-            elif  YoutubeAlgo(videoid=video_id) > a and  YoutubeAlgo(videoid=video_id) > b and c==0 and a!=0 and b!=0:
-                c = int( YoutubeAlgo(videoid=video_id))
-                lv=c
-
-                ctime = time.time()
-                lvt=ctime
-            elif a!=0 and b!=0 and c!=0:
-                netview=int(c)-int(b)
-                nettime=int(ctime)-int(btime)
-                nettimef=nettime/60
-                cvr=netview/nettimef
-                print(cvr)
-                rtime=(ftimet-ctime)/60
-                finalview=cvr*rtime+c
-                if int(finalview)>int(Rview):
-                    print("Views Will Meet ","Expected Views:- ",finalview)
-                    botmsg(str(("Views Will Meet ", "Expected Views:- ", finalview)))
-                else:
-                    botmsg(str(("Views Will Not Meet ", "Expected Views:- ", finalview)))
-                    print("Views Will Not Meet ", "Expected Views:- ", finalview)
-                break
-    except:
+    nview = YoutubeAlgo(videoid=video_id)
+    ntime=time.time()
+    if count==0 and nview>lv:
+        lvt = time.time()
+        lv = nview
+        count = count + 1
+    elif nview>lv:
+        netv=int(lv)-int(nview)
+        nett=(lvt-ntime/60)
+        netvcr=netv/nett
+        botmsg("Previous Views= "+str(lv)+" Previous Time= "+str(lvt/60)+" Now views= "+str(nview)+" Now Time= "+str(ntime/60)+" Net CVr= "+str(netvcr))
+        lv=nview
+        lvt=nview
+    else:
         pass
-
